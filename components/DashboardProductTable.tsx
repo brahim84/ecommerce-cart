@@ -79,7 +79,7 @@ const DashboardProductTable = () => {
                           <Image
                             width={48}
                             height={48}
-                            src={product?.mainImage ? `/${product?.mainImage}` : "/product_placeholder.jpg"}
+                            src={product?.mainImage ? `${process.env.NEXT_PUBLIC_API_URL}/${product?.mainImage}` : "/product_placeholder.jpg"}
                             alt="Avatar Tailwind CSS Component"
                             className="w-auto h-auto"
                           />

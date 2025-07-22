@@ -234,7 +234,7 @@ const AddNewProduct = () => {
           />
           {product?.mainImage && (
             <Image
-              src={`/` + product?.mainImage}
+              src={`${process.env.NEXT_PUBLIC_API_URL}/` + product?.mainImage}
               alt={product?.title}
               className="w-auto h-auto"
               width={100}

@@ -103,7 +103,7 @@ const Header = () => {
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="w-10">
                 <Image
-                  src="/randomuser.jpg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/randomuser.jpg`}
                   alt="random profile photo"
                   width={30}
                   height={30}

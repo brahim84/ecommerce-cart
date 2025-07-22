@@ -43,7 +43,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         <div className="flex justify-center gap-x-16 pt-10 max-lg:flex-col items-center gap-y-5 px-5">
           <div>
             <Image
-              src={product?.mainImage ? `/${product?.mainImage}` : "/product_placeholder.jpg"}
+              src={product?.mainImage ? `${process.env.NEXT_PUBLIC_API_URL}/${product?.mainImage}` : "/product_placeholder.jpg"}
               width={500}
               height={500}
               alt="main image"
@@ -53,7 +53,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
               {images?.map((imageItem: ImageItem) => (
                 <Image
                   key={imageItem.imageID}
-                  src={`/${imageItem.image}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/${imageItem.image}`}
                   width={100}
                   height={100}
                   alt="laptop image"
@@ -83,42 +83,42 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
               </div>
               <div className="flex gap-x-2">
                 <Image
-                  src="/visa.svg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/visa.svg`}
                   width={50}
                   height={50}
                   alt="visa icon"
                   className="w-auto h-auto"
                 />
                 <Image
-                  src="/mastercard.svg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/mastercard.svg`}
                   width={50}
                   height={50}
                   alt="mastercard icon"
                   className="h-auto w-auto"
                 />
                 <Image
-                  src="/ae.svg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/ae.svg`}
                   width={50}
                   height={50}
                   alt="americal express icon"
                   className="h-auto w-auto"
                 />
                 <Image
-                  src="/paypal.svg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/paypal.svg`}
                   width={50}
                   height={50}
                   alt="paypal icon"
                   className="w-auto h-auto"
                 />
                 <Image
-                  src="/dinersclub.svg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/dinersclub.svg`}
                   width={50}
                   height={50}
                   alt="diners club icon"
                   className="h-auto w-auto"
                 />
                 <Image
-                  src="/discover.svg"
+                  src={`${process.env.NEXT_PUBLIC_API_URL}/discover.svg`}
                   width={50}
                   height={50}
                   alt="discover icon"
