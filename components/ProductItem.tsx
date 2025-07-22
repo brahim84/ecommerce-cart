@@ -20,13 +20,14 @@ const ProductItem = ({
   product: Product;
   color: string;
 }) => {
+  console.log("---prod---",product)
   return (
     <div className="flex flex-col items-center gap-y-2">
       <Link href={`/product/${product.slug}`}>
         <Image
           src={
             product.mainImage
-              ? `/${product.mainImage}`
+              ? `${process.env.NEXT_PUBLIC_API_URL}/${product.mainImage}`
               : "/product_placeholder.jpg"
           }
           width="0"

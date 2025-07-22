@@ -93,13 +93,10 @@ const Header = () => {
       {pathname.startsWith("/admin") === true && (
         <div className="flex justify-between h-32 bg-white items-center px-16 max-[1320px]:px-10  max-w-screen-2xl mx-auto max-[400px]:px-5">
           <Link href="/">
-            <Image
-              src="/logo v1.png"
-              width={130}
-              height={130}
-              alt="remote works logo"
-              className="w-56 h-auto"
-            />
+          <h2 className="text-white text-4xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
+          <span className="text-black">Remote</span><span className="text-blue-600"> Works </span>
+            {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
+          </h2>
           </Link>
           <div className="flex gap-x-5 items-center">
             <FaBell className="text-xl" />
