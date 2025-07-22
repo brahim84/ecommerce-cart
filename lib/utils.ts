@@ -1,15 +1,15 @@
 export const categoryMenuList = [
   {
     id: 1,
-    title: "Smart Phones",
-    src: "/smart phone icon.png",
-    href: "/shop/smart-phones"
+    title: "Garage",
+    src: "/garage-icon.png",
+    href: "/shop/garage"
   },
   {
     id: 2,
-    title: "Tablets",
-    src: "/tablet icon.png",
-    href: "/shop/tablets"
+    title: "Auto",
+    src: "/sedan-icon.png",
+    href: "/shop/auto"
   },
   {
     id: 3,
