@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface OrderProduct {
@@ -49,10 +50,11 @@ const AdminSingleOrder = () => {
   const params = useParams<{ id: string }>();
 
   const router = useRouter();
+  const authFetch = useAuthFetch();
 
   useEffect(() => {
     const fetchOrderData = async () => {
-      const response = await fetch(
+      const response = await authFetch(
         `${API_URL}/api/orders/${params?.id}`
       );
       const data: Order = await response.json();
@@ -60,7 +62,7 @@ const AdminSingleOrder = () => {
     };
 
     const fetchOrderProducts = async () => {
-      const response = await fetch(
+      const response = await authFetch(
         `${API_URL}/api/order-product/${params?.id}`
       );
       const data: OrderProduct[] = await response.json();
@@ -99,7 +101,7 @@ const AdminSingleOrder = () => {
         return;
       }
 
-      fetch(`${API_URL}/api/orders/${order?.id}`, {
+      authFetch(`${API_URL}/api/orders/${order?.id}`, {
         method: "PUT", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
@@ -126,11 +128,11 @@ const AdminSingleOrder = () => {
       method: "DELETE",
     };
 
-    fetch(
+    authFetch(
       `${API_URL}/api/order-product/${order?.id}`,
       requestOptions
     ).then((response) => {
-      fetch(
+      authFetch(
         `${API_URL}/api/orders/${order?.id}`,
         requestOptions
       ).then((response) => {

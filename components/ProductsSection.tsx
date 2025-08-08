@@ -12,7 +12,7 @@ import React from "react";
 import ProductItem from "./ProductItem";
 import Heading from "./Heading";
 const API_URL = process.env.NEXT_PUBLIC_API_URL
-//console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL)
+console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL)
 const ProductsSection = async () => {
   // sending API request for getting all products
 
@@ -27,13 +27,11 @@ const ProductsSection = async () => {
   //console.log("---products---",products)
   return (
     <div className="bg-blue-500 border-t-4 border-white">
-      <div className="max-w-screen-2xl mx-auto pt-20">
-        <Heading title="FEATURED PRODUCTS" />
-        <div className="grid grid-cols-4 justify-items-center max-w-screen-2xl mx-auto py-10 gap-x-2 px-10 gap-y-8 max-xl:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">
-          {products.map((product: Product) => (
-            <ProductItem key={product.id} product={product} color="white" />
-          ))}
-        </div>
+      <Heading title="FEATURED PRODUCTS" />
+      <div className="max-w-screen-2xl mx-auto py-10 px-16 max-md:px-10 flex flex-wrap gap-x-5 gap-y-5 justify-center">
+        {products.map((product: Product) => (
+          <ProductItem key={product.id} product={product} color="white" />
+        ))}
       </div>
     </div>
   );

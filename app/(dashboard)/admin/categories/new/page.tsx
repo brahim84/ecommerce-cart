@@ -3,9 +3,11 @@ import { DashboardSidebar } from "@/components";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { convertCategoryNameToURLFriendly } from "../../../../../utils/categoryFormating";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const DashboardNewCategoryPage = () => {
+  const authFetch = useAuthFetch();
   const [categoryInput, setCategoryInput] = useState({
     name: "",
   });
@@ -20,7 +22,7 @@ const DashboardNewCategoryPage = () => {
         }),
       };
       // sending API request for creating new cateogry
-      fetch(`${API_URL}/api/categories`, requestOptions)
+      authFetch(`${API_URL}/api/categories`, requestOptions)
         .then((response) => {
           if (response.status === 201) {
             return response.json();

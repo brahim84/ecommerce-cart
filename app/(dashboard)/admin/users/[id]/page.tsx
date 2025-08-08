@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { isValidEmailAddressFormat } from "@/lib/utils";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface DashboardUserDetailsProps {
@@ -23,12 +25,13 @@ const DashboardSingleUserPage = ({
     role: "",
   });
   const router = useRouter();
+  const authFetch = useAuthFetch();
 
   const deleteUser = async () => {
     const requestOptions = {
       method: "DELETE",
     };
-    fetch(`${API_URL}/api/users/${id}`, requestOptions)
+    authFetch(`${API_URL}/api/users/${id}`, requestOptions)
       .then((response) => {
         if (response.status === 204) {
           toast.success("User deleted successfully");
@@ -63,7 +66,7 @@ const DashboardSingleUserPage = ({
             role: userInput.role,
           }),
         };
-        fetch(`${API_URL}/api/users/${id}`, requestOptions)
+        authFetch(`${API_URL}/api/users/${id}`, requestOptions)
           .then((response) => {
             if (response.status === 200) {
               return response.json();
@@ -87,7 +90,7 @@ const DashboardSingleUserPage = ({
 
   useEffect(() => {
     // sending API request for a single user
-    fetch(`${API_URL}/api/users/${id}`)
+    authFetch(`${API_URL}/api/users/${id}`)
       .then((res) => {
         return res.json();
       })

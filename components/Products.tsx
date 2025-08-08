@@ -39,6 +39,8 @@ const Products = async ({ slug }: any) => {
   }
 
   // sending API request with filtering, sorting and pagination for getting all products
+  console.log("fetching products with filters:")
+  
   const data = await fetch(
     `${API_URL}/api/products?filters[price][$lte]=${
       slug?.searchParams?.price || 3000
@@ -64,7 +66,7 @@ const Products = async ({ slug }: any) => {
   const products = await req.json();
   */
   return (
-    <div className="grid grid-cols-3 justify-items-center gap-x-2 gap-y-5 max-[1300px]:grid-cols-3 max-lg:grid-cols-2 max-[500px]:grid-cols-1">
+    <div className="grid grid-cols-3 w-max mx-auto gap-x-2 gap-y-5 max-[1300px]:grid-cols-3 max-lg:grid-cols-2 max-[500px]:grid-cols-1">
       {products.length > 0 ? (
         products.map((product: Product) => (
           <ProductItem key={product.id} product={product} color="black" />

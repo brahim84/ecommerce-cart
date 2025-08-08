@@ -1,7 +1,6 @@
-import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-import toast from "react-hot-toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -10,19 +9,23 @@ export default async function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session: {
-    user: { name: string; email: string; image: string };
-  } | null = await getServerSession();
+  const session = await getServerSession(authOptions);
+  console.log("Session in layout:", session);
 
   if (!session) {
     redirect("/");
   }
 
-  let email: string = await session?.user?.email;
-  
-  const res = await fetch(`${API_URL}/api/users/email/${email}`);
+  const email = session?.user?.email;
+  const token = session?.token;
+
+  const res = await fetch(`${API_URL}/api/users/email/${email}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   const data = await res.json();
-  // redirecting user to the home page if not admin
+
   if (data.role === "user") {
     redirect("/");
   }

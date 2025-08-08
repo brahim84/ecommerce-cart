@@ -12,14 +12,17 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const authFetch = useAuthFetch();
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const response = await fetch(`${API_URL}/api/orders`);
+      const response = await authFetch(`${API_URL}/api/orders`);
       const data = await response.json();
       setOrders(data);
     };

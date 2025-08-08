@@ -3,9 +3,11 @@ import { DashboardSidebar } from "@/components";
 import { isValidEmailAddressFormat } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const DashboardCreateNewUser = () => {
+  const authFetch = useAuthFetch();
   const [userInput, setUserInput] = useState({
     email: "",
     password: "",
@@ -29,7 +31,7 @@ const DashboardCreateNewUser = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userInput),
         };
-        fetch(`${API_URL}/api/users`, requestOptions)
+        authFetch(`${API_URL}/api/users`, requestOptions)
           .then((response) => {
             if(response.status === 201){
               return response.json();

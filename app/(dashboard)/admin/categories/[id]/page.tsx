@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { formatCategoryName } from "../../../../../utils/categoryFormating";
 import { convertCategoryNameToURLFriendly } from "../../../../../utils/categoryFormating";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface DashboardSingleCategoryProps {
@@ -18,48 +19,41 @@ const DashboardSingleCategory = ({
     name: "",
   });
   const router = useRouter();
+  const authFetch = useAuthFetch();
 
   const deleteCategory = async () => {
-    const requestOptions = {
-      method: "DELETE",
-    };
-    // sending API request for deleting a category
-    fetch(`${API_URL}/api/categories/${id}`, requestOptions)
-      .then((response) => {
-        if (response.status === 204) {
-          toast.success("Category deleted successfully");
-          router.push("/admin/categories");
-        } else {
-          throw Error("There was an error deleting a category");
-        }
-      })
-      .catch((error) => {
-        toast.error("There was an error deleting category");
-      });
+    try {
+      const response = await authFetch(`${API_URL}/api/categories/${id}`, { method: "DELETE" });
+      if (response.status === 204) {
+        toast.success("Category deleted successfully");
+        router.push("/admin/categories");
+      } else {
+        throw Error("There was an error deleting a category");
+      }
+    } catch (error) {
+      toast.error("There was an error deleting category");
+    }
   };
 
   const updateCategory = async () => {
     if (categoryInput.name.length > 0) {
-      const requestOptions = {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: convertCategoryNameToURLFriendly(categoryInput.name),
-        }),
-      };
-      // sending API request for updating a category
-      fetch(`${API_URL}/api/categories/${id}`, requestOptions)
-        .then((response) => {
-          if (response.status === 200) {
-            return response.json();
-          } else {
-            throw Error("Error updating a category");
-          }
-        })
-        .then((data) => toast.success("Category successfully updated"))
-        .catch((error) => {
-          toast.error("There was an error while updating a category");
+      try {
+        const response = await authFetch(`${API_URL}/api/categories/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: convertCategoryNameToURLFriendly(categoryInput.name),
+          }),
         });
+        if (response.status === 200) {
+          await response.json();
+          toast.success("Category successfully updated");
+        } else {
+          throw Error("Error updating a category");
+        }
+      } catch (error) {
+        toast.error("There was an error while updating a category");
+      }
     } else {
       toast.error("For updating a category you must enter all values");
       return;
@@ -67,17 +61,12 @@ const DashboardSingleCategory = ({
   };
 
   useEffect(() => {
-    // sending API request for getting single categroy
-    fetch(`${API_URL}/api/categories/${id}`)
-      .then((res) => {
-        return res.json();
-      })
+    authFetch(`${API_URL}/api/categories/${id}`)
+      .then((res) => res.json())
       .then((data) => {
-        setCategoryInput({
-          name: data?.name,
-        });
+        setCategoryInput({ name: data?.name });
       });
-  }, [id]);
+  }, [authFetch, id]);
 
   return (
     <div className="bg-white flex justify-start max-w-screen-2xl mx-auto xl:h-full max-xl:flex-col max-xl:gap-y-5">

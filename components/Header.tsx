@@ -79,7 +79,7 @@ const Header = () => {
         <div className="h-32 bg-white flex items-center justify-between px-16 max-[1320px]:px-16 max-md:px-6 max-lg:flex-col max-lg:gap-y-7 max-lg:justify-center max-lg:h-60 max-w-screen-2xl mx-auto">
           <Link href="/">
           <h2 className="text-white text-4xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
-          <span className="text-black">Remote</span><span className="text-blue-600"> Works </span>
+          <span className="text-black">Remote</span><span className="text-blue-600"> Shop </span>
             {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
           </h2>
           </Link>
@@ -94,7 +94,7 @@ const Header = () => {
         <div className="flex justify-between h-32 bg-white items-center px-16 max-[1320px]:px-10  max-w-screen-2xl mx-auto max-[400px]:px-5">
           <Link href="/">
           <h2 className="text-white text-4xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
-          <span className="text-black">Remote</span><span className="text-blue-600"> Works </span>
+          <span className="text-black">Remote</span><span className="text-blue-600"> Shop </span>
             {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
           </h2>
           </Link>

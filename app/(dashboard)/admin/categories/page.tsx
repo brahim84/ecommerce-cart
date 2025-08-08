@@ -4,14 +4,16 @@ import { nanoid } from "nanoid";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { formatCategoryName } from "../../../../utils/categoryFormating";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const DashboardCategory = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const authFetch = useAuthFetch();
 
   // getting all categories to be displayed on the all categories page
   useEffect(() => {
-    fetch(`${API_URL}/api/categories`)
+    authFetch(`${API_URL}/api/categories`)
       .then((res) => {
         return res.json();
       })

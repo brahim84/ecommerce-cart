@@ -12,22 +12,23 @@
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { useEffect, useState } from "react";
 import CustomButton from "./CustomButton";
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const DashboardProductTable = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const authFetch = useAuthFetch();
 
   useEffect(() => {
-    fetch(`${API_URL}/api/products?mode=admin`, {cache: "no-store"})
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setProducts(data);
+    authFetch(`${API_URL}/api/products?mode=admin`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => {
+        console.error(err);
       });
-  }, []);
+  }, [authFetch]);
 
   return (
     <div className="w-full">

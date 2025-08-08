@@ -9,11 +9,12 @@ import {
   formatCategoryName,
 } from "../../../../../utils/categoryFormating";
 import { nanoid } from "nanoid";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 
 interface DashboardProductDetailsProps {
   params: { id: number };
 }
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const DashboardProductDetails = ({
   params: { id },
@@ -22,30 +23,29 @@ const DashboardProductDetails = ({
   const [categories, setCategories] = useState<Category[]>();
   const [otherImages, setOtherImages] = useState<OtherImages[]>([]);
   const router = useRouter();
+  const authFetch = useAuthFetch();
 
   // functionality for deleting product
   const deleteProduct = async () => {
-    const requestOptions = {
-      method: "DELETE",
-    };
-    fetch(`${API_URL}/api/products/${id}`, requestOptions)
-      .then((response) => {
-        if (response.status !== 204) {
-          if (response.status === 400) {
-            toast.error(
-              "Cannot delete the product because of foreign key constraint"
-            );
-          } else {
-            throw Error("There was an error while deleting product");
-          }
-        } else {
-          toast.success("Product deleted successfully");
-          router.push("/admin/products");
-        }
-      })
-      .catch((error) => {
-        toast.error("There was an error while deleting product");
+    try {
+      const response = await authFetch(`${API_URL}/api/products/${id}`, {
+        method: "DELETE",
       });
+      if (response.status !== 204) {
+        if (response.status === 400) {
+          toast.error(
+            "Cannot delete the product because of foreign key constraint"
+          );
+        } else {
+          throw Error("There was an error while deleting product");
+        }
+      } else {
+        toast.success("Product deleted successfully");
+        router.push("/admin/products");
+      }
+    } catch (error) {
+      toast.error("There was an error while deleting product");
+    }
   };
 
   // functionality for updating product
@@ -61,23 +61,21 @@ const DashboardProductDetails = ({
       return;
     }
 
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(product),
-    };
-    fetch(`${API_URL}/api/products/${id}`, requestOptions)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw Error("There was an error while updating product");
-        }
-      })
-      .then((data) => toast.success("Product successfully updated"))
-      .catch((error) => {
-        toast.error("There was an error while updating product");
+    try {
+      const response = await authFetch(`${API_URL}/api/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
       });
+      if (response.status === 200) {
+        await response.json();
+        toast.success("Product successfully updated");
+      } else {
+        throw Error("There was an error while updating product");
+      }
+    } catch (error) {
+      toast.error("There was an error while updating product");
+    }
   };
 
   // functionality for uploading main image file
@@ -86,7 +84,7 @@ const DashboardProductDetails = ({
     formData.append("uploadedFile", file);
 
     try {
-      const response = await fetch(`${API_URL}/api/main-image`, {
+      const response = await authFetch(`${API_URL}/api/main-image`, {
         method: "POST",
         body: formData,
       });
@@ -104,35 +102,36 @@ const DashboardProductDetails = ({
 
   // fetching main product data including other product images
   const fetchProductData = async () => {
-    fetch(`${API_URL}/api/products/${id}`)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setProduct(data);
-      });
+    try {
+      const res = await authFetch(`${API_URL}/api/products/${id}`);
+      const data = await res.json();
+      setProduct(data);
 
-    const imagesData = await fetch(`${API_URL}/api/images/${id}`, {
-      cache: "no-store",
-    });
-    const images = await imagesData.json();
-    setOtherImages((currentImages) => images);
+      const imagesData = await authFetch(`${API_URL}/api/images/${id}`, {
+        cache: "no-store",
+      });
+      const images = await imagesData.json();
+      setOtherImages(images);
+    } catch (error) {
+      toast.error("Error fetching product data");
+    }
   };
 
   // fetching all product categories. It will be used for displaying categories in select category input
   const fetchCategories = async () => {
-    fetch(`${API_URL}/api/categories`)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setCategories(data);
-      });
+    try {
+      const res = await authFetch(`${API_URL}/api/categories`);
+      const data = await res.json();
+      setCategories(data);
+    } catch (error) {
+      toast.error("Error fetching categories");
+    }
   };
 
   useEffect(() => {
     fetchCategories();
     fetchProductData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return (

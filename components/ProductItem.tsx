@@ -20,9 +20,8 @@ const ProductItem = ({
   product: Product;
   color: string;
 }) => {
-  console.log("---prod---",product)
   return (
-    <div className="flex flex-col items-center gap-y-2">
+    <div className="flex flex-col items-center gap-y-2 bg-white rounded-2xl shadow-xl p-4 hover:shadow-2xl transition-shadow duration-300">
       <Link href={`/product/${product.slug}`}>
         <Image
           src={
@@ -33,7 +32,7 @@ const ProductItem = ({
           width="0"
           height="0"
           sizes="100vw"
-          className="w-auto h-[300px]"
+          className="w-auto h-[300px] rounded-xl shadow-lg transition-transform duration-300 ease-in-out hover:scale-110"
           alt={product?.title}
         />
       </Link>
@@ -41,8 +40,8 @@ const ProductItem = ({
         href={`/product/${product.slug}`}
         className={
           color === "black"
-            ? `text-xl text-black font-normal mt-2 uppercase`
-            : `text-xl text-white font-normal mt-2 uppercase`
+            ? "text-xl text-black font-normal mt-2 uppercase"
+            : "text-xl text-blue-900 font-normal mt-2 uppercase"
         }
       >
         {product.title}
@@ -50,17 +49,16 @@ const ProductItem = ({
       <p
         className={
           color === "black"
-            ? "text-lg text-black font-semibold"
-            : "text-lg text-white font-semibold"
+            ? "text-lg text-black font-bold bg-gray-100 px-3 py-1 rounded-full mt-2"
+            : "text-lg text-white font-bold bg-blue-600 px-3 py-1 rounded-full mt-2"
         }
       >
         ${product.price}
       </p>
-
       <ProductItemRating productRating={product?.rating} />
       <Link
         href={`/product/${product?.slug}`}
-        className="block flex justify-center items-center w-full uppercase bg-white px-0 py-2 text-base border border-black border-gray-300 font-bold text-blue-600 shadow-sm hover:bg-black hover:bg-gray-100 focus:outline-none focus:ring-2"
+        className="block w-full text-center uppercase bg-blue-600 px-0 py-2 text-base rounded-lg font-bold text-white shadow hover:bg-blue-700 transition-colors duration-200 mt-3"
       >
         <p>View product</p>
       </Link>

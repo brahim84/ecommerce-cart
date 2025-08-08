@@ -3,14 +3,17 @@ import { CustomButton, DashboardSidebar } from "@/components";
 import { nanoid } from "nanoid";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const DashboardUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const authFetch = useAuthFetch();
 
   useEffect(() => {
     // sending API request for all users
-    fetch(`${API_URL}/api/users`)
+    authFetch(`${API_URL}/api/users`)
       .then((res) => {
         return res.json();
       })
