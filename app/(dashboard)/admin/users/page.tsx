@@ -31,9 +31,9 @@ const DashboardUsers = () => {
           <Link href="/admin/users/new">
             <CustomButton
               buttonType="button"
-              customWidth="110px"
-              paddingX={10}
-              paddingY={5}
+              customWidth="48"
+              paddingX={5}
+              paddingY={2}
               textSize="base"
               text="Add new user"
             />

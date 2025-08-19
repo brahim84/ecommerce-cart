@@ -1,83 +1,85 @@
-// *********************
-// Role of the component: Showing products on the shop page with applied filter and sort
-// Name of the component: Products.tsx
-// Developer: Rahim Basheer
-// Version: 1.0
-// Component call: <Products slug={slug} />
-// Input parameters: { slug }: any
-// Output: products grid
-// *********************
-
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import ProductItem from "./ProductItem";
-const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-const Products = async ({ slug }: any) => {
-  // getting all data from URL slug and preparing everything for sending GET request
-  const inStockNum = slug?.searchParams?.inStock === "true" ? 1 : 0;
-  const outOfStockNum = slug?.searchParams?.outOfStock === "true" ? 1 : 0;
-  const page = slug?.searchParams?.page ? Number(slug?.searchParams?.page) : 1;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  let stockMode: string = "lte";
-  
-  // preparing inStock and out of stock filter for GET request
-  // If in stock checkbox is checked, stockMode is "equals"
-  if (inStockNum === 1) {
-    stockMode = "equals";
+interface ProductsProps {
+  slug: any;
+}
+
+export default function Products({ slug }: ProductsProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Stable params
+  const price = slug?.searchParams?.price ?? 3000;
+  const rating = slug?.searchParams?.rating ?? 0;
+  const inStock = String(slug?.searchParams?.inStock ?? "false");
+  const outOfStock = String(slug?.searchParams?.outOfStock ?? "false");
+  const sort = slug?.searchParams?.sort ?? "";
+  const page = slug?.searchParams?.page ?? 1;
+  const categorySlug = slug?.params?.slug?.length > 0 ? slug.params.slug : "";
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    async function loadProducts() {
+      setLoading(true);
+
+      const inStockBool = inStock === "true";
+      const outOfStockBool = outOfStock === "true";
+
+      let stockMode: "lte" | "equals" | "lt" = "lte";
+      if (inStockBool && outOfStockBool) stockMode = "lte";         // both
+      else if (inStockBool && !outOfStockBool) stockMode = "equals"; // only in-stock
+      else if (!inStockBool && outOfStockBool) stockMode = "lt";     // only out-of-stock
+      else stockMode = "lte";                                        // none selected → all
+
+      const categoryFilter = categorySlug
+        ? `filters[category][$equals]=${encodeURIComponent(categorySlug)}&`
+        : "";
+
+      try {
+        const res = await fetch(
+          `${API_URL}/api/products?filters[price][$lte]=${price}` +
+            `&filters[rating][$gte]=${rating}` +
+            `&filters[inStock][$${stockMode}]=1&${categoryFilter}` +
+            `sort=${encodeURIComponent(sort)}&page=${page}`,
+          { signal }
+        );
+
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        const json = await res.json();
+        if (!signal.aborted) setProducts(Array.isArray(json) ? json : []);
+      } catch (err) {
+        if (!signal.aborted) {
+          console.error("Failed to fetch products:", err);
+          setProducts([]);
+        }
+      } finally {
+        if (!signal.aborted) setLoading(false);
+      }
+    }
+
+    loadProducts();
+    return () => controller.abort();
+  }, [price, rating, inStock, outOfStock, sort, page, categorySlug]);
+
+  if (!loading && products.length === 0) {
+    return (
+      <h3 className="text-3xl mt-5 text-center w-full col-span-full max-[1000px]:text-2xl max-[500px]:text-lg">
+        No products found for specified query
+      </h3>
+    );
   }
- // If out of stock checkbox is checked, stockMode is "lt"
-  if (outOfStockNum === 1) {
-    stockMode = "lt";
-  }
-   // If in stock and out of stock checkboxes are checked, stockMode is "lte"
-  if (inStockNum === 1 && outOfStockNum === 1) {
-    stockMode = "lte";
-  }
-   // If in stock and out of stock checkboxes aren't checked, stockMode is "gt"
-  if (inStockNum === 0 && outOfStockNum === 0) {
-    stockMode = "gt";
-  }
 
-  // sending API request with filtering, sorting and pagination for getting all products
-  console.log("fetching products with filters:")
-  
-  const data = await fetch(
-    `${API_URL}/api/products?filters[price][$lte]=${
-      slug?.searchParams?.price || 3000
-    }&filters[rating][$gte]=${
-      Number(slug?.searchParams?.rating) || 0
-    }&filters[inStock][$${stockMode}]=1&${
-      slug?.params?.slug?.length > 0
-        ? `filters[category][$equals]=${slug?.params?.slug}&`
-        : ""
-    }sort=${slug?.searchParams?.sort}&page=${page}`
-  );
-
-  const products = await data.json();
-
-  /*
-    const req = await fetch(
-    `http://localhost:1337/api/products?populate=*&filters[price][$lte]=${
-      searchParams?.price || 1000
-    }${searchParams.women === "true" ? "&filters[category][$eq]=women" : ""}${searchParams.womenNewEdition === "true" ? "&filters[category][$eq]=women%20new%20edition" : ""}&filters[rating][$gte]=${
-      searchParams?.rating || 1
-    }`
-  );
-  const products = await req.json();
-  */
   return (
     <div className="grid grid-cols-3 w-max mx-auto gap-x-2 gap-y-5 max-[1300px]:grid-cols-3 max-lg:grid-cols-2 max-[500px]:grid-cols-1">
-      {products.length > 0 ? (
-        products.map((product: Product) => (
-          <ProductItem key={product.id} product={product} color="black" />
-        ))
-      ) : (
-        <h3 className="text-3xl mt-5 text-center w-full col-span-full max-[1000px]:text-2xl max-[500px]:text-lg">
-          No products found for specified query
-        </h3>
-      )}
+      {products.map((product: Product) => (
+        <ProductItem key={product.id} product={product} color="black" />
+      ))}
     </div>
   );
-};
-
-export default Products;
+}

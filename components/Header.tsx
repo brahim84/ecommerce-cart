@@ -22,10 +22,13 @@ import HeartElement from "./HeartElement";
 import { signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useWishlistStore } from "@/app/_zustand/wishlistStore";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const Header = () => {
   const { data: session, status } = useSession();
+  const authFetch = useAuthFetch();
   const pathname = usePathname();
   const { wishlist, setWishlist, wishQuantity } = useWishlistStore();
 
@@ -36,9 +39,7 @@ const Header = () => {
 
   // getting all wishlist items by user id
   const getWishlistByUserId = async (id: string) => {
-    const response = await fetch(`${API_URL}/api/wishlist/${id}`, {
-      cache: "no-store",
-    });
+    const response = await authFetch(`${API_URL}/api/wishlist/${id}`);
     const wishlist = await response.json();
     const productArray: {
       id: string;
@@ -58,7 +59,7 @@ const Header = () => {
   const getUserByEmail = async () => {
     if (session?.user?.email) {
       
-      fetch(`${API_URL}/api/users/email/${session?.user?.email}`, {
+      authFetch(`${API_URL}/api/users/email/${session?.user?.email}`, {
         cache: "no-store",
       })
         .then((response) => response.json())

@@ -5,7 +5,6 @@ import { Footer, Header } from "@/components";
 import SessionProvider from "@/utils/SessionProvider";
 import Providers from "@/Providers";
 import { getServerSession } from "next-auth";
-import 'svgmap/dist/svgMap.min.css';
 
 
 

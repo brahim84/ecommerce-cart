@@ -117,7 +117,7 @@ const DashboardCreateNewUser = () => {
         <div className="flex gap-x-2">
           <button
             type="button"
-            className="uppercase bg-blue-500 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
+            className="uppercase bg-blue-500 px-5 py-2 text-lg border border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 rounded-md hover:text-white focus:outline-none focus:ring-2"
             onClick={addNewUser}
           >
             Create user

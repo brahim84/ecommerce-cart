@@ -248,7 +248,7 @@ const DashboardProductDetails = ({
                 })
               }
             >
-              {categories &&
+              {categories && categories.length > 0  &&
                 categories.map((category: Category) => (
                   <option key={category?.id} value={category?.id}>
                     {formatCategoryName(category?.name)}
@@ -263,7 +263,7 @@ const DashboardProductDetails = ({
         <div>
           <input
             type="file"
-            className="file-input file-input-bordered file-input-lg w-full max-w-sm"
+            className="file-input file-input-bordered file-input-md max-w-sm"
             onChange={(e) => {
               //const selectedFile = e.target.files[0];
               const files = e.target.files;
@@ -322,13 +322,13 @@ const DashboardProductDetails = ({
           <button
             type="button"
             onClick={updateProduct}
-            className="uppercase bg-blue-500 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
+            className="uppercase rounded-md bg-blue-500 px-5 py-2 text-lg border border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
           >
             Update product
           </button>
           <button
             type="button"
-            className="uppercase bg-red-600 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2"
+            className="uppercase rounded-md bg-red-600 px-5 py-2 text-lg border border-gray-300 font-bold text-white shadow-sm hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2"
             onClick={deleteProduct}
           >
             Delete product

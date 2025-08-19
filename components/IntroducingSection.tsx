@@ -15,7 +15,7 @@ const IntroducingSection = () => {
   return (
     <div className="py-20 pt-24 bg-gradient-to-l from-white to-blue-600">
       <div className="text-center flex flex-col gap-y-5 items-center">
-        <h2 className="text-white text-8xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
+        <h2 className="text-white text-4xl font-extrabold text-center mb-2 max-md:text-2xl max-[480px]:text-4xl">
           Remote Controls, Locks, Keys & More <br></br><span className="text-black">Remote</span><span className="text-blue-600"> Shop</span>
         </h2>
         <div>

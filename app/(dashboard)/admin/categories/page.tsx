@@ -33,15 +33,15 @@ const DashboardCategory = () => {
           <Link href="/admin/categories/new">
             <CustomButton
               buttonType="button"
-              customWidth="110px"
-              paddingX={10}
-              paddingY={5}
+              customWidth="64"
+              paddingX={5}
+              paddingY={2}
               textSize="base"
               text="Add new category"
             />
           </Link>
         </div>
-        <div className="xl:ml-5 w-full max-xl:mt-5 overflow-auto w-full h-[80vh]">
+        <div className="xl:ml-5 w-full max-xl:mt-5 overflow-auto h-[80vh]">
           <table className="table table-md table-pin-cols">
             {/* head */}
             <thead>
@@ -83,13 +83,6 @@ const DashboardCategory = () => {
                 ))}
             </tbody>
             {/* foot */}
-            <tfoot>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th></th>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </div>

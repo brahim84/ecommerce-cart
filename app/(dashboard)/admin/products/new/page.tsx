@@ -4,9 +4,12 @@ import { convertCategoryNameToURLFriendly as convertSlugToURLFriendly } from "@/
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const AddNewProduct = () => {
+  const authFetch = useAuthFetch();
   const [product, setProduct] = useState<{
     title: string;
     price: number;
@@ -44,7 +47,7 @@ const AddNewProduct = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(product),
     };
-    fetch(`${API_URL}/api/products`, requestOptions)
+    authFetch(`${API_URL}/api/products`, requestOptions)
       .then((response) => {
         if (response.status === 201) {
           return response.json();
@@ -75,7 +78,7 @@ const AddNewProduct = () => {
     formData.append("uploadedFile", file);
 
     try {
-      const response = await fetch(`${API_URL}/api/main-image`, {
+      const response = await authFetch(`${API_URL}/api/main-image`, {
         method: "POST",
         body: formData,
       });
@@ -91,7 +94,7 @@ const AddNewProduct = () => {
   };
 
   const fetchCategories = async () => {
-    fetch(`${API_URL}/api/categories`)
+    authFetch(`${API_URL}/api/categories`)
       .then((res) => {
         return res.json();
       })
@@ -226,7 +229,7 @@ const AddNewProduct = () => {
         <div>
           <input
             type="file"
-            className="file-input file-input-bordered file-input-lg w-full max-w-sm"
+            className="file-input file-input-bordered file-input-md max-w-sm"
             onChange={(e: any) => {
               uploadFile(e.target.files[0]);
               setProduct({ ...product, mainImage: e.target.files[0].name });
@@ -260,7 +263,7 @@ const AddNewProduct = () => {
           <button
             onClick={addProduct}
             type="button"
-            className="uppercase bg-blue-500 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
+            className="uppercase bg-blue-500 px-5 py-2 text-lg rounded-lg border order-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
           >
             Add product
           </button>

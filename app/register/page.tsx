@@ -1,3 +1,9 @@
+// *********************
+// Role of the component: Registration component
+// Name of the component: register.tsx
+// Developer: Rahim Basheer
+// Version: 1.0
+// *********************
 "use client";
 import { CustomButton, SectionTitle } from "@/components";
 import { useSession } from "next-auth/react";

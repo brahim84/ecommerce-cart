@@ -37,16 +37,16 @@ const DashboardProductTable = () => {
         <Link href="/admin/products/new">
           <CustomButton
             buttonType="button"
-            customWidth="110px"
-            paddingX={10}
-            paddingY={5}
+            customWidth="48"
+            paddingX={5}
+            paddingY={2}
             textSize="base"
             text="Add new product"
           />
         </Link>
       </div>
 
-      <div className="xl:ml-5 w-full max-xl:mt-5 overflow-auto w-full h-[80vh]">
+      <div className="xl:ml-5 max-xl:mt-5 overflow-auto w-full h-[80vh]">
         <table className="table table-md table-pin-cols">
           {/* head */}
           <thead>

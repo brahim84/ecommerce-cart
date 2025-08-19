@@ -47,7 +47,7 @@ const DashboardNewCategoryPage = () => {
     <div className="bg-white flex justify-start max-w-screen-2xl mx-auto xl:h-full max-xl:flex-col max-xl:gap-y-5">
       <DashboardSidebar />
       <div className="flex flex-col gap-y-7 xl:pl-5 max-xl:px-5 w-full">
-        <h1 className="text-3xl font-semibold">Add new category</h1>
+        <h1 className="text-xl font-semibold">Add new category</h1>
         <div>
           <label className="form-control w-full max-w-xs">
             <div className="label">
@@ -67,7 +67,7 @@ const DashboardNewCategoryPage = () => {
         <div className="flex gap-x-2">
           <button
             type="button"
-            className="uppercase bg-blue-500 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
+            className="uppercase bg-blue-500 px-5 py-2 text-lg border rounded-lg border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
             onClick={addNewCategory}
           >
             Create category

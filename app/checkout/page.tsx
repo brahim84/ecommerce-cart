@@ -9,138 +9,179 @@ import { isValidCardNumber, isValidCreditCardCVVOrCVC, isValidCreditCardExpirati
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const CheckoutPage = () => {
-  const [checkoutForm, setCheckoutForm] = useState({
-    name: "",
-    lastname: "",
-    phone: "",
-    email: "",
-    cardName: "",
-    cardNumber: "",
-    expirationDate: "",
-    cvc: "",
-    company: "",
-    adress: "",
-    apartment: "",
-    city: "",
-    country: "",
-    postalCode: "",
-    orderNotice: "",
-  });
-  const { products, total, clearCart } = useProductStore();
-  const router = useRouter();
+    const [checkoutForm, setCheckoutForm] = useState({
+      name: "",
+      lastname: "",
+      phone: "",
+      email: "",
+      adress: "",
+      apartment: "",
+      city: "",
+      country: "",
+      postalCode: "",
+      orderNotice: "",
+    });
+    const { products, total, calculateTotals, clearCart } = useProductStore();
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
-  const makePurchase = async () => {
-    if (
-      checkoutForm.name.length > 0 &&
-      checkoutForm.lastname.length > 0 &&
-      checkoutForm.phone.length > 0 &&
-      checkoutForm.email.length > 0 &&
-      checkoutForm.cardName.length > 0 &&
-      checkoutForm.expirationDate.length > 0 &&
-      checkoutForm.cvc.length > 0 &&
-      checkoutForm.company.length > 0 &&
-      checkoutForm.adress.length > 0 &&
-      checkoutForm.apartment.length > 0 &&
-      checkoutForm.city.length > 0 &&
-      checkoutForm.country.length > 0 &&
-      checkoutForm.postalCode.length > 0
-    ) {
-      if (!isValidNameOrLastname(checkoutForm.name)) {
-        toast.error("You entered invalid format for name");
-        return;
+    useEffect(() => {
+      // keep totals in sync if user lands directly
+      calculateTotals();
+      if (products.length === 0) {
+        toast.error("You don't have items in your cart");
+        router.push("/cart");
       }
+    }, []);
 
-      if (!isValidNameOrLastname(checkoutForm.lastname)) {
-        toast.error("You entered invalid format for lastname");
-        return;
-      }
+    const makePurchase = async () => {
 
-      if (!isValidEmailAddressFormat(checkoutForm.email)) {
-        toast.error("You entered invalid format for email address");
-        return;
-      }
+      if (
+        checkoutForm.name.length > 0 &&
+        checkoutForm.lastname.length > 0 &&
+        checkoutForm.phone.length > 0 &&
+        checkoutForm.email.length > 0 &&
+        checkoutForm.adress.length > 0 &&
+        checkoutForm.apartment.length > 0 &&
+        checkoutForm.city.length > 0 &&
+        checkoutForm.country.length > 0 &&
+        checkoutForm.postalCode.length > 0
+      ) {
+        if (!isValidNameOrLastname(checkoutForm.name)) {
+          toast.error("You entered invalid format for name");
+          return;
+        }
 
-      if (!isValidNameOrLastname(checkoutForm.cardName)) {
-        toast.error("You entered invalid format for card name");
-        return;
-      }
+        if (!isValidNameOrLastname(checkoutForm.lastname)) {
+          toast.error("You entered invalid format for lastname");
+          return;
+        }
 
-      if (!isValidCardNumber(checkoutForm.cardNumber)) {
-        toast.error("You entered invalid format for credit card number");
-        return;
-      }
+        if (!isValidEmailAddressFormat(checkoutForm.email)) {
+          toast.error("You entered invalid format for email address");
+          return;
+        }
 
-      if (!isValidCreditCardExpirationDate(checkoutForm.expirationDate)) {
-        toast.error(
-          "You entered invalid format for credit card expiration date"
-        );
-        return;
-      }
+        // if (!isValidNameOrLastname(checkoutForm.cardName)) {
+        //   toast.error("You entered invalid format for card name");
+        //   return;
+        // }
 
-      if (!isValidCreditCardCVVOrCVC(checkoutForm.cvc)) {
-        toast.error("You entered invalid format for credit card CVC or CVV");
-        return;
-      }
+        // if (!isValidCardNumber(checkoutForm.cardNumber)) {
+        //   toast.error("You entered invalid format for credit card number");
+        //   return;
+        // }
 
-      // sending API request for creating a order
-      const response = fetch(`${API_URL}/api/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: checkoutForm.name,
-          lastname: checkoutForm.lastname,
-          phone: checkoutForm.phone,
-          email: checkoutForm.email,
-          company: checkoutForm.company,
-          adress: checkoutForm.adress,
-          apartment: checkoutForm.apartment,
-          postalCode: checkoutForm.postalCode,
-          status: "processing",
-          total: total,
-          city: checkoutForm.city,
-          country: checkoutForm.country,
-          orderNotice: checkoutForm.orderNotice,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          const orderId: string = data.id;
-          // for every product in the order we are calling addOrderProduct function that adds fields to the customer_order_product table
+        // if (!isValidCreditCardExpirationDate(checkoutForm.expirationDate)) {
+        //   toast.error(
+        //     "You entered invalid format for credit card expiration date"
+        //   );
+        //   return;
+        // }
+
+        // if (!isValidCreditCardCVVOrCVC(checkoutForm.cvc)) {
+        //   toast.error("You entered invalid format for credit card CVC or CVV");
+        //   return;
+        // }
+        setLoading(true);
+        if (!products || products.length === 0) {
+          return;
+        }
+        var orderId: string = "";
+        try {
+            // sending API request for creating a order
+            const response = await fetch(`${API_URL}/api/orders`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: checkoutForm.name,
+              lastname: checkoutForm.lastname,
+              phone: checkoutForm.phone,
+              email: checkoutForm.email,
+              adress: checkoutForm.adress,
+              apartment: checkoutForm.apartment,
+              postalCode: checkoutForm.postalCode,
+              total: total,
+              city: checkoutForm.city,
+              country: checkoutForm.country,
+              orderNotice: checkoutForm.orderNotice,
+            }),
+          });
+          if (!response.ok) {
+            toast.error("Failed to create order");
+            setLoading(false);
+            return;
+          }
+          const data = await response.json();
+          orderId = data.id;
           for (let i = 0; i < products.length; i++) {
-            let productId: string = products[i].id;
             addOrderProduct(orderId, products[i].id, products[i].amount);
           }
-        })
-        .then(() => {
-          setCheckoutForm({
-            name: "",
-            lastname: "",
-            phone: "",
-            email: "",
-            cardName: "",
-            cardNumber: "",
-            expirationDate: "",
-            cvc: "",
-            company: "",
-            adress: "",
-            apartment: "",
-            city: "",
-            country: "",
-            postalCode: "",
-            orderNotice: "",
-          });
-          clearCart();
-          toast.success("Order created successfuly");
-          setTimeout(() => {
-            router.push("/");
-          }, 1000);
+          // .then((res) => res.json())
+          // .then((data) => {
+          //   const orderId: string = data.id;
+          //   // for every product in the order we are calling addOrderProduct function that adds fields to the customer_order_product table
+          //   for (let i = 0; i < products.length; i++) {
+          //     let productId: string = products[i].id;
+          //     addOrderProduct(orderId, products[i].id, products[i].amount);
+          //   }
+          // })
+          // .catch((err) => {
+          //   console.error("Error creating order:", err);
+          //   toast.error("Failed to create order");
+          //   setLoading(false); 
+          //   throw new Error("Order creation failed");
+          // });
+        } catch (error) {
+            console.error("Error creating order:", error);
+            toast.error("Failed to create order");
+            setLoading(false); 
+            return;
+        }
+
+      } else {
+        toast.error("You need to enter values in the input fields");
+        return;
+      }
+      // sending API request for creating a checkout session
+      try {
+        const customer_email = checkoutForm.email;
+        const res = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: products.map((p) => ({
+              id: p.id,
+              title: p.title,
+              price: p.price,
+              image: p.image?.startsWith("http")
+                ? p.image
+                : p.image
+                  ? `${process.env.NEXT_PUBLIC_API_URL}/${p.image}`
+                  : undefined,
+              amount: p.amount,
+            })),
+            customer_email,
+            orderId
+          }),
         });
-    } else {
-      toast.error("You need to enter values in the input fields");
+
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(msg || "Failed to create checkout session");
+        }
+
+        const { url } = await res.json();
+        clearCart(); // clear cart after successful payment
+        setLoading(false);
+        window.location.href = url; // redirect to Stripe Hosted Checkout
+      } catch (e: any) {
+        toast.error(e.message ?? "Payment init failed");
+        setLoading(false);
+      }
     }
-  };
 
   const addOrderProduct = async (
     orderId: string,
@@ -148,7 +189,8 @@ const CheckoutPage = () => {
     productQuantity: number
   ) => {
     // sending API POST request for the table customer_order_product that does many to many relatioship for order and product
-    const response = await fetch(`${API_URL}/api/order-product`, {
+    try {
+      const response = await fetch(`${API_URL}/api/order-product`, {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
@@ -159,17 +201,13 @@ const CheckoutPage = () => {
         quantity: productQuantity,
       }),
     });
-  };
-
-  
-
-  useEffect(() => {
-    if (products.length === 0) {
-      toast.error("You don't have items in your cart");
-      router.push("/cart");
+    } catch (error) {
+      console.error("Error creating order products:", error);
+      toast.error("Failed to create order products");
+      setLoading(false); 
+      return;
     }
-  }, []);
-
+  };
   return (
     <div className="bg-white">
       <SectionTitle title="Checkout" path="Home | Cart | Checkout" />
@@ -362,118 +400,6 @@ const CheckoutPage = () => {
                 </div>
               </div>
             </section>
-
-            <section aria-labelledby="payment-heading" className="mt-10">
-              <h2
-                id="payment-heading"
-                className="text-lg font-medium text-gray-900"
-              >
-                Payment details
-              </h2>
-
-              <div className="mt-6 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4">
-                <div className="col-span-3 sm:col-span-4">
-                  <label
-                    htmlFor="name-on-card"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Name on card
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="name-on-card"
-                      name="name-on-card"
-                      autoComplete="cc-name"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.cardName}
-                      onChange={(e) =>
-                        setCheckoutForm({
-                          ...checkoutForm,
-                          cardName: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="col-span-3 sm:col-span-4">
-                  <label
-                    htmlFor="card-number"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Card number
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="card-number"
-                      name="card-number"
-                      autoComplete="cc-number"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.cardNumber}
-                      onChange={(e) =>
-                        setCheckoutForm({
-                          ...checkoutForm,
-                          cardNumber: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="col-span-2 sm:col-span-3">
-                  <label
-                    htmlFor="expiration-date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Expiration date (MM/YY)
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      name="expiration-date"
-                      id="expiration-date"
-                      autoComplete="cc-exp"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.expirationDate}
-                      onChange={(e) =>
-                        setCheckoutForm({
-                          ...checkoutForm,
-                          expirationDate: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="cvc"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    CVC or CVV
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      name="cvc"
-                      id="cvc"
-                      autoComplete="csc"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.cvc}
-                      onChange={(e) =>
-                        setCheckoutForm({
-                          ...checkoutForm,
-                          cvc: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
             <section aria-labelledby="shipping-heading" className="mt-10">
               <h2
                 id="shipping-heading"
@@ -483,30 +409,6 @@ const CheckoutPage = () => {
               </h2>
 
               <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="company"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Company
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="company"
-                      name="company"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.company}
-                      onChange={(e) =>
-                        setCheckoutForm({
-                          ...checkoutForm,
-                          company: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="address"
@@ -663,7 +565,7 @@ const CheckoutPage = () => {
                 onClick={makePurchase}
                 className="w-full rounded-md border border-transparent bg-blue-500 px-20 py-2 text-lg font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-gray-50 sm:order-last"
               >
-                Pay Now
+                {loading ? "Redirecting..." : "Pay Now"}
               </button>
             </div>
           </div>

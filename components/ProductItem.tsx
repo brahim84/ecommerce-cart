@@ -7,7 +7,7 @@
 // Input parameters: { product: Product; color: string; }
 // Output: Product item component that contains product image, title, link to the single product page, price, button...
 // *********************
-
+"use client";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
@@ -31,8 +31,8 @@ const ProductItem = ({
           }
           width="0"
           height="0"
-          sizes="100vw"
-          className="w-auto h-[300px] rounded-xl shadow-lg transition-transform duration-300 ease-in-out hover:scale-110"
+          sizes="75vw"
+          className="w-auto h-[200px] rounded-xl shadow-lg transition-transform duration-300 ease-in-out hover:scale-110"
           alt={product?.title}
         />
       </Link>
