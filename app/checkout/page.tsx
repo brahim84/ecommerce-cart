@@ -2,216 +2,285 @@
 import { SectionTitle } from "@/components";
 import { useProductStore } from "../_zustand/store";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { isValidCardNumber, isValidCreditCardCVVOrCVC, isValidCreditCardExpirationDate, isValidEmailAddressFormat, isValidNameOrLastname } from "@/lib/utils";
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+import { isValidEmailAddressFormat, isValidNameOrLastname } from "@/lib/utils";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { useSession } from "next-auth/react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
+type UserProfile = {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  email?: string;
+};
+
+type UserAddress = {
+  id: string;
+  label?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  line1: string;
+  line2?: string | null;
+  city: string;
+  region?: string | null;       
+  postalCode: string;
+  country: string;
+  isDefaultShipping?: boolean;
+};
+
 
 const CheckoutPage = () => {
-    const [checkoutForm, setCheckoutForm] = useState({
-      name: "",
-      lastname: "",
-      phone: "",
-      email: "",
-      adress: "",
-      apartment: "",
-      city: "",
-      country: "",
-      postalCode: "",
-      orderNotice: "",
-    });
-    const { products, total, calculateTotals, clearCart } = useProductStore();
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
+  const authFetch = useAuthFetch();
+  const { status } = useSession();
+  const saveTimer = useRef<NodeJS.Timeout | null>(null);
+  const [checkoutForm, setCheckoutForm] = useState({
+    name: "",
+    lastname: "",
+    phone: "",
+    email: "",
+    line1: "",
+    line2: "",
+    city: "",
+    country: "",
+    postalCode: "",
+    orderNotice: "",
+  });
 
-    useEffect(() => {
-      // keep totals in sync if user lands directly
-      calculateTotals();
-      if (products.length === 0) {
-        toast.error("You don't have items in your cart");
-        router.push("/cart");
-      }
-    }, []);
+  const { products, total, calculateTotals } = useProductStore();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-    const makePurchase = async () => {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [addresses, setAddresses] = useState<UserAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [saveAddress, setSaveAddress] = useState<boolean>(true); // checkbox to save edited/new address
 
-      if (
-        checkoutForm.name.length > 0 &&
-        checkoutForm.lastname.length > 0 &&
-        checkoutForm.phone.length > 0 &&
-        checkoutForm.email.length > 0 &&
-        checkoutForm.adress.length > 0 &&
-        checkoutForm.apartment.length > 0 &&
-        checkoutForm.city.length > 0 &&
-        checkoutForm.country.length > 0 &&
-        checkoutForm.postalCode.length > 0
-      ) {
-        if (!isValidNameOrLastname(checkoutForm.name)) {
-          toast.error("You entered invalid format for name");
-          return;
-        }
+  // Choose default address (memoized)
+  const defaultAddress = useMemo(() => {
+    if (!addresses.length) return null;
+    const def = addresses.find(a => a.isDefaultShipping);
+    return def ?? addresses[0];
+  }, [addresses]);
 
-        if (!isValidNameOrLastname(checkoutForm.lastname)) {
-          toast.error("You entered invalid format for lastname");
-          return;
-        }
-
-        if (!isValidEmailAddressFormat(checkoutForm.email)) {
-          toast.error("You entered invalid format for email address");
-          return;
-        }
-
-        // if (!isValidNameOrLastname(checkoutForm.cardName)) {
-        //   toast.error("You entered invalid format for card name");
-        //   return;
-        // }
-
-        // if (!isValidCardNumber(checkoutForm.cardNumber)) {
-        //   toast.error("You entered invalid format for credit card number");
-        //   return;
-        // }
-
-        // if (!isValidCreditCardExpirationDate(checkoutForm.expirationDate)) {
-        //   toast.error(
-        //     "You entered invalid format for credit card expiration date"
-        //   );
-        //   return;
-        // }
-
-        // if (!isValidCreditCardCVVOrCVC(checkoutForm.cvc)) {
-        //   toast.error("You entered invalid format for credit card CVC or CVV");
-        //   return;
-        // }
-        setLoading(true);
-        if (!products || products.length === 0) {
-          return;
-        }
-        var orderId: string = "";
-        try {
-            // sending API request for creating a order
-            const response = await fetch(`${API_URL}/api/orders`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: checkoutForm.name,
-              lastname: checkoutForm.lastname,
-              phone: checkoutForm.phone,
-              email: checkoutForm.email,
-              adress: checkoutForm.adress,
-              apartment: checkoutForm.apartment,
-              postalCode: checkoutForm.postalCode,
-              total: total,
-              city: checkoutForm.city,
-              country: checkoutForm.country,
-              orderNotice: checkoutForm.orderNotice,
-            }),
-          });
-          if (!response.ok) {
-            toast.error("Failed to create order");
-            setLoading(false);
-            return;
-          }
-          const data = await response.json();
-          orderId = data.id;
-          for (let i = 0; i < products.length; i++) {
-            addOrderProduct(orderId, products[i].id, products[i].amount);
-          }
-          // .then((res) => res.json())
-          // .then((data) => {
-          //   const orderId: string = data.id;
-          //   // for every product in the order we are calling addOrderProduct function that adds fields to the customer_order_product table
-          //   for (let i = 0; i < products.length; i++) {
-          //     let productId: string = products[i].id;
-          //     addOrderProduct(orderId, products[i].id, products[i].amount);
-          //   }
-          // })
-          // .catch((err) => {
-          //   console.error("Error creating order:", err);
-          //   toast.error("Failed to create order");
-          //   setLoading(false); 
-          //   throw new Error("Order creation failed");
-          // });
-        } catch (error) {
-            console.error("Error creating order:", error);
-            toast.error("Failed to create order");
-            setLoading(false); 
-            return;
-        }
-
-      } else {
-        toast.error("You need to enter values in the input fields");
-        return;
-      }
-      // sending API request for creating a checkout session
-      try {
-        const customer_email = checkoutForm.email;
-        const res = await fetch("/api/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            items: products.map((p) => ({
-              id: p.id,
-              title: p.title,
-              price: p.price,
-              image: p.image?.startsWith("http")
-                ? p.image
-                : p.image
-                  ? `${process.env.NEXT_PUBLIC_API_URL}/${p.image}`
-                  : undefined,
-              amount: p.amount,
-            })),
-            customer_email,
-            orderId
-          }),
-        });
-
-        if (!res.ok) {
-          const msg = await res.text();
-          throw new Error(msg || "Failed to create checkout session");
-        }
-
-        const { url } = await res.json();
-        clearCart(); // clear cart after successful payment
-        setLoading(false);
-        window.location.href = url; // redirect to Stripe Hosted Checkout
-      } catch (e: any) {
-        toast.error(e.message ?? "Payment init failed");
-        setLoading(false);
-      }
+  // ---- Load profile + addresses for logged-in users
+  useEffect(() => {
+    calculateTotals();
+    if (products.length === 0) {
+      toast.error("You don't have items in your cart");
+      router.push("/cart");
     }
 
-  const addOrderProduct = async (
-    orderId: string,
-    productId: string,
-    productQuantity: number
-  ) => {
-    // sending API POST request for the table customer_order_product that does many to many relatioship for order and product
+    (async () => {
+      console.log("Fetching profile and addresses...");
+      try {
+        // profile
+        const pRes = await authFetch(`${API_URL}/api/user-profile`);
+        if (pRes.ok) {
+          const p: UserProfile = await pRes.json();
+          setProfile(p);
+        }
+
+        // addresses
+        const aRes = await authFetch(`${API_URL}/api/user-address`);
+        if (aRes.ok) {
+          const arr: UserAddress[] = await aRes.json();
+          setAddresses(arr);
+          // preselect default
+          const def = arr.find(a => a.isDefaultShipping) ?? arr[0];
+          if (def) setSelectedAddressId(def.id);
+        }
+      } catch (err: any) {
+        console.error("Fetching profile error:", err);
+        return new Response(err.message ?? "Something went wrong", { status: 500 });
+      }
+    })();
+  }, []);
+
+// Autosave contact on change only when authenticated
+useEffect(() => {
+  if (status !== "authenticated") return;
+
+  if (saveTimer.current) clearTimeout(saveTimer.current);
+  saveTimer.current = setTimeout(async () => {
+    const f = checkoutForm;
+    if (!f.name && !f.lastname && !f.phone) return;
+
     try {
-      const response = await fetch(`${API_URL}/api/order-product`, {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customerOrderId: orderId,
-        productId: productId,
-        quantity: productQuantity,
-      }),
+      await authFetch(`${API_URL}/api/user-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: f.name,
+          lastName:  f.lastname,
+          phone:     f.phone,
+        }),
+      });
+    } catch (e) {
+      // ignore; non-blocking
+    }
+  }, 600); // 600ms debounce
+  return () => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+  };
+  // re-run when these fields change
+}, [checkoutForm.name, checkoutForm.lastname, checkoutForm.phone, status, authFetch]);
+
+
+
+  useEffect(() => {
+    setCheckoutForm(prev => {
+      const next = { ...prev };
+
+      if (profile) {
+        if (!next.name && profile.firstName) next.name = profile.firstName;
+        if (!next.lastname && profile.lastName) next.lastname = profile.lastName;
+        if (!next.phone && profile.phone) next.phone = profile.phone;
+        if (!next.email && profile.email) next.email = profile.email;
+      }
+
+      const chosen = addresses.find(a => a.id === selectedAddressId) ?? defaultAddress;
+      if (chosen) {
+        if (!next.line1) next.line1 = chosen.line1 ?? "";
+        if (!next.line2 && chosen.line2) next.line2 = chosen.line2;
+        if (!next.city) next.city = chosen.city ?? "";
+        if (!next.country) next.country = chosen.country ?? "";
+        if (!next.postalCode) next.postalCode = chosen.postalCode ?? "";
+      }
+
+      return next;
     });
-    } catch (error) {
-      console.error("Error creating order products:", error);
-      toast.error("Failed to create order products");
-      setLoading(false); 
+  }, [profile, addresses, selectedAddressId, defaultAddress]);
+
+  const makePurchase = async () => {
+    const f = checkoutForm;
+    if (
+      !f.name || !f.lastname || !f.phone || !f.email ||
+      !f.line1 || !f.city || !f.country || !f.postalCode
+    ) {
+      toast.error("Please fill in all required fields.");
       return;
     }
+    if (!isValidNameOrLastname(f.name))    { toast.error("Invalid name"); return; }
+    if (!isValidNameOrLastname(f.lastname)){ toast.error("Invalid lastname"); return; }
+    if (!isValidEmailAddressFormat(f.email)){ toast.error("Invalid email"); return; }
+    if (!products?.length) return;
+
+    setLoading(true);
+    let orderId = "";
+
+    // Optionally save address to the user's address book if user is logged in and checked "save"
+    try {
+      if (saveAddress && status === "authenticated") {
+        await authFetch(`${API_URL}/api/user-address`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json"},
+          body: JSON.stringify({
+            line1: f.line1,
+            line2: f.line2 || null,
+            city: f.city,
+            region: null, 
+            postalCode: f.postalCode,
+            country: f.country,
+            isDefaultShipping: addresses.length === 0, // first saved becomes default
+          }),
+        });
+      }
+    } catch {
+      // non-blocking; continue checkout
+    }
+
+    // Create order
+    try {
+      const response = await fetch(`${API_URL}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({
+          name: f.name,
+          lastname: f.lastname,
+          phone: f.phone,
+          email: f.email,
+          line1: f.line1,
+          line2: f.line2,
+          postalCode: f.postalCode,
+          total: total,
+          city: f.city,
+          country: f.country,
+          orderNotice: f.orderNotice,
+        }),
+      });
+      if (!response.ok) {
+        toast.error("Failed to create order");
+        setLoading(false);
+        return;
+      }
+      const data = await response.json();
+      orderId = data.id;
+
+      //Create order-product rows in parallel
+      await Promise.all(
+        products.map((p) =>
+          fetch(`${API_URL}/api/order-product`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({
+              customerOrderId: orderId,
+              productId: p.id,
+              quantity: p.amount,
+            }),
+          })
+        )
+      );
+    } catch (error) {
+      toast.error("Failed to create order");
+      setLoading(false);
+      return;
+    }
+
+    // Start Stripe Checkout
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: products.map((p) => ({
+            id: p.id,
+            title: p.title,
+            price: p.price,
+            image: p.image?.startsWith("http")
+              ? p.image
+              : p.image
+                ? `${process.env.NEXT_PUBLIC_API_URL}/${p.image}`
+                : undefined,
+            amount: p.amount,
+          })),
+          customer_email: f.email,
+          orderId,
+        }),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Failed to create checkout session");
+      }
+
+      const { url } = await res.json();
+      setLoading(false);
+      window.location.href = url;
+    } catch (e: any) {
+      toast.error(e.message ?? "Payment init failed");
+      setLoading(false);
+    }
   };
+
   return (
     <div className="bg-white">
       <SectionTitle title="Checkout" path="Home | Cart | Checkout" />
-      {/* Background color split screen for large screens */}
+
       <div
         className="hidden h-full w-1/2 bg-white lg:block"
         aria-hidden="true"
@@ -290,6 +359,7 @@ const CheckoutPage = () => {
           </div>
         </section>
 
+        {/* FORM */}
         <form className="px-4 pt-16 sm:px-6 lg:col-start-1 lg:row-start-1 lg:px-0">
           <div className="mx-auto max-w-lg lg:max-w-none">
             <section aria-labelledby="contact-info-heading">
@@ -400,6 +470,47 @@ const CheckoutPage = () => {
                 </div>
               </div>
             </section>
+
+            {/* Saved addresses shows only when addresses exist */}
+            {addresses.length > 0 && (
+              <section className="mt-10">
+                <h3 className="text-base font-semibold text-gray-900 mb-3">
+                  Use a saved address
+                </h3>
+                <div className="space-y-2">
+                  {addresses.map((a) => (
+                    <label key={a.id} className="flex items-start gap-3 rounded-md border p-3 hover:bg-gray-50">
+                      <input
+                        type="radio"
+                        name="saved-address"
+                        checked={selectedAddressId === a.id}
+                        onChange={() => {
+                          setSelectedAddressId(a.id);
+                          // Immediately apply the chosen address to the form
+                          setCheckoutForm(cf => ({
+                            ...cf,
+                            line1: a.line1 ?? "",
+                            line2: a.line2 ?? "",
+                            city: a.city ?? "",
+                            country: a.country ?? "",
+                            postalCode: a.postalCode ?? "",
+                          }));
+                        }}
+                      />
+                      <div className="text-sm">
+                        <div className="font-medium">
+                          {a.label || "Address"} {a.isDefaultShipping && <span className="ml-2 rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">Default</span>}
+                        </div>
+                        <div className="text-gray-600">
+                          {a.line1}{a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.postalCode}, {a.country}
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section aria-labelledby="shipping-heading" className="mt-10">
               <h2
                 id="shipping-heading"
@@ -423,11 +534,11 @@ const CheckoutPage = () => {
                       name="address"
                       autoComplete="street-address"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.adress}
+                      value={checkoutForm.line1}
                       onChange={(e) =>
                         setCheckoutForm({
                           ...checkoutForm,
-                          adress: e.target.value,
+                          line1: e.target.value,
                         })
                       }
                     />
@@ -447,11 +558,11 @@ const CheckoutPage = () => {
                       id="apartment"
                       name="apartment"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      value={checkoutForm.apartment}
+                      value={checkoutForm.line2}
                       onChange={(e) =>
                         setCheckoutForm({
                           ...checkoutForm,
-                          apartment: e.target.value,
+                          line2: e.target.value,
                         })
                       }
                     />
@@ -558,6 +669,20 @@ const CheckoutPage = () => {
                 </div>
               </div>
             </section>
+            {/*  Save address toggle - only for logged-in users */}
+            {status === "authenticated" && (
+              <div className="mt-6 flex items-center gap-2">
+                <input
+                  id="save-address"
+                  type="checkbox"
+                  checked={saveAddress}
+                  onChange={(e) => setSaveAddress(e.target.checked)}
+                />
+                <label htmlFor="save-address" className="text-sm text-gray-700">
+                  Save this address to my account
+                </label>
+              </div>
+            )}
 
             <div className="mt-10 border-t border-gray-200 pt-6 ml-0">
               <button

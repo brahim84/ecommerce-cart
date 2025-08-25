@@ -40,7 +40,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   return (
     <div className="bg-white">
       <div className="max-w-screen-2xl mx-auto">
-        <div className="flex justify-center gap-x-16 pt-10 max-lg:flex-col items-center gap-y-5 px-5">
+        <div className="flex justify-center gap-x-8 pt-10 max-lg:flex-col items-center gap-y-5 px-5">
           <div>
             <Image
               src={product?.mainImage ? `${process.env.NEXT_PUBLIC_API_URL}/${product?.mainImage}` : "/product_placeholder.jpg"}
@@ -62,18 +62,18 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-y-7 text-black max-[500px]:text-center">
+          <div className="rounded-lg bg-gray-50 px-4 py-6 flex flex-col gap-y-7 text-black max-[500px]:text-center">
             <SingleProductRating rating={product?.rating} />
             <h1 className="text-3xl">{product?.title}</h1>
-            <p className="text-xl font-semibold">${product?.price}</p>
+            <p className="text-base font-semibold">${product?.price}</p>
             <StockAvailabillity stock={94} inStock={product?.inStock} />
             <SingleProductDynamicFields product={product} />
             <div className="flex flex-col gap-y-2 max-[500px]:items-center">
               <AddToWishlistBtn product={product} slug={params.productSlug} />
-              <p className="text-lg">
+              <p className="text-base">
                 SKU: <span className="ml-1">abccd-18</span>
               </p>
-              <div className="text-lg flex gap-x-2">
+              <div className="text-base flex gap-x-2">
                 <span>Share:</span>
                 <div className="flex items-center gap-x-1 text-2xl">
                   <FaSquareFacebook />

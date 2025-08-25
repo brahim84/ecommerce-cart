@@ -19,63 +19,65 @@ const ProductTabs = ({ product }: { product: Product }) => {
   const [currentProductTab, setCurrentProductTab] = useState<number>(0);
 
   return (
-    <div className="px-5 text-black">
-      <div role="tablist" className="tabs tabs-bordered">
-        <a
-          role="tab"
-          className={`tab text-lg text-black pb-8 max-[500px]:text-base max-[400px]:text-sm max-[370px]:text-xs ${
-            currentProductTab === 0 && "tab-active"
-          }`}
+  <div className="px-5 text-black">
+      {/* Tab buttons */}
+      <div className="flex border-b border-gray-200">
+        <button
           onClick={() => setCurrentProductTab(0)}
+          className={`px-5 py-3 text-lg max-sm:text-base border-t border-l border-r rounded-t-md transition-all ${
+            currentProductTab === 0
+              ? "bg-white text-black font-semibold shadow-md border-gray-300"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
         >
           Description
-        </a>
-        <a
-          role="tab"
-          className={`tab text-black text-lg pb-8 max-[500px]:text-base max-[400px]:text-sm max-[370px]:text-xs ${
-            currentProductTab === 1 && "tab-active"
-          }`}
+        </button>
+        <button
           onClick={() => setCurrentProductTab(1)}
+          className={`ml-2 px-5 py-3 text-lg max-sm:text-base border-t border-l border-r rounded-t-md transition-all ${
+            currentProductTab === 1
+              ? "bg-white text-black font-semibold shadow-md border-gray-300"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
         >
           Additional info
-        </a>
+        </button>
       </div>
-      <div className="pt-5">
+
+      {/* Content box */}
+      <div className="border border-gray-200 rounded-b-md rounded-tr-md shadow-sm p-5">
         {currentProductTab === 0 && (
-          <p className="text-lg max-sm:text-base max-sm:text-sm">
-            {product?.description}
+          <p className="text-base sm:text-lg leading-relaxed">
+            {product?.description || "No description available"}
           </p>
         )}
 
         {currentProductTab === 1 && (
           <div className="overflow-x-auto">
-            <table className="table text-xl text-center max-[500px]:text-base">
+            <table className="table-auto w-full text-left text-base sm:text-lg border border-gray-200">
               <tbody>
-                {/* row 1 */}
-                <tr>
-                  <th>Manufacturer:</th>
-                  <td>{product?.manufacturer}</td>
+                <tr className="border-b">
+                  <th className="p-3 w-40 font-medium text-gray-600">Manufacturer</th>
+                  <td className="p-3">{product?.manufacturer || "—"}</td>
                 </tr>
-                {/* row 2 */}
-                <tr>
-                  <th>Category:</th>
-                  <td>
+                <tr className="border-b">
+                  <th className="p-3 font-medium text-gray-600">Category</th>
+                  <td className="p-3">
                     {product?.category?.name
-                      ? formatCategoryName(product?.category?.name)
+                      ? formatCategoryName(product.category.name)
                       : "No category"}
                   </td>
                 </tr>
-                {/* row 3 */}
-                <tr>
-                  <th>Color:</th>
-                  <td>Silver, LightSlateGray, Blue</td>
-                </tr>
+                {/* <tr>
+                  <th className="p-3 font-medium text-gray-600">Color</th>
+                  <td className="p-3">Silver, LightSlateGray, Blue</td>
+                </tr> */}
               </tbody>
             </table>
           </div>
         )}
       </div>
-    </div>
+  </div>
   );
 };
 

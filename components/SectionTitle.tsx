@@ -8,15 +8,20 @@
 // Output: div containing h1 for page title and p for page location path 
 // *********************
 
-import React from 'react'
-
-const SectionTitle = ({title, path} : {title: string; path: string}) => {
+const SectionTitle = ({ title, path }: { title: string; path: string }) => {
   return (
-    <div className='h-[250px] border-b pt-16 border-white bg-blue-500 mb-2 max-sm:h-[200px] max-sm:pt-16'>
-        <h1 className='section-title-title text-7xl text-center mb-7 max-md:text-7xl max-sm:text-5xl text-white max-sm:mb-2'>{ title }</h1>
-        <p className='section-title-path text-xl text-center max-sm:text-xl text-white'>{ path }</p>
+    <div className="relative mb-6 h-[120px] max-sm:h-[80px] flex flex-col items-center justify-center bg-gradient-to-l from-white to-blue-600">
+      {/* Content */}
+      <div className="text-center px-4">
+        <h1 className="text-4xl font-extrabold text-white drop-shadow-sm max-md:text-4xl max-sm:text-3xl">
+          {title}
+        </h1>
+        <p className="mt-3 text-lg font-medium text-white/90 max-sm:text-base">
+          {path}
+        </p>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default SectionTitle
+export default SectionTitle;

@@ -77,15 +77,19 @@ const Header = () => {
     <header className="bg-white">
       <HeaderTop />
       {pathname.startsWith("/admin") === false && (
-        <div className="h-32 bg-white flex items-center justify-between px-16 max-[1320px]:px-16 max-md:px-6 max-lg:flex-col max-lg:gap-y-7 max-lg:justify-center max-lg:h-60 max-w-screen-2xl mx-auto">
+        <div className="h-24 bg-white flex items-center justify-between px-8 max-md:px-4 max-lg:flex-col max-lg:gap-y-4 max-lg:h-auto max-w-screen-2xl mx-auto">
           <Link href="/">
-          <h2 className="text-white text-4xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
-          <span className="text-black">Remote</span><span className="text-blue-600"> Shop </span>
-            {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
-          </h2>
+            <h2 className="text-2xl font-extrabold text-center text-black max-lg:mt-3">
+              <span>Remote</span>
+              <span className="text-blue-600"> Shop</span>
+            </h2>
           </Link>
-          <SearchInput />
-          <div className="flex gap-x-10">
+
+          <div className="flex-1 mx-6 max-lg:mx-0 w-full max-lg:mt-3">
+            <SearchInput />
+          </div>
+
+          <div className="flex gap-x-6 max-lg:mt-3">
             <HeartElement wishQuantity={wishQuantity} />
             <CartElement />
           </div>
@@ -94,7 +98,7 @@ const Header = () => {
       {pathname.startsWith("/admin") === true && (
         <div className="flex justify-between h-32 bg-white items-center px-16 max-[1320px]:px-10  max-w-screen-2xl mx-auto max-[400px]:px-5">
           <Link href="/">
-          <h2 className="text-white text-4xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
+          <h2 className="text-white text-2xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
           <span className="text-black">Remote</span><span className="text-blue-600"> Shop </span>
             {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
           </h2>
