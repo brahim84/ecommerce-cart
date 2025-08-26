@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 const RegisterPage = () => {
   const [error, setError] = useState("");
@@ -33,6 +34,9 @@ const RegisterPage = () => {
     const email = e.target[2].value;
     const password = e.target[3].value;
     const confirmPassword = e.target[4].value;
+    const firstName = e.target[0].value;
+    const lastName = e.target[1].value;
+
 
     if (!isValidEmail(email)) {
       setError("Email is invalid");
@@ -54,7 +58,7 @@ const RegisterPage = () => {
 
     try {
       // sending API request for registering user
-      const res = await fetch("/api/register", {
+      const res = await fetch(`${API_URL}/api/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,14 +66,16 @@ const RegisterPage = () => {
         body: JSON.stringify({
           email,
           password,
+          firstName,
+          lastName,
         }),
       });
 
-      if (res.status === 400) {
+      if (res.status === 409) {
         toast.error("This email is already registered");
         setError("The email already in use");
       }
-      if (res.status === 200) {
+      if (res.status === 201) {
         setError("");
         toast.success("Registration successful");
         router.push("/login");
@@ -99,15 +105,15 @@ const RegisterPage = () => {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
-                  htmlFor="name"
+                  htmlFor="firstname"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Name
+                 First Name
                 </label>
                 <div className="mt-2">
                   <input
-                    id="name"
-                    name="name"
+                    id="firstname"
+                    name="firstname"
                     type="text"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
