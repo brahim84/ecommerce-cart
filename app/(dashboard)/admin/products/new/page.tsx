@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthFetch } from "@/hooks/useAuthFetch";
+import router from "next/router";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -67,6 +68,7 @@ const AddNewProduct = () => {
           slug: "",
           categoryId: "",
         });
+        router.push("/admin/products");
       })
       .catch((error) => {
         toast.error("There was an error while creating product");

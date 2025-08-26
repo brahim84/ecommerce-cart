@@ -70,6 +70,7 @@ const DashboardProductDetails = ({
       if (response.status === 200) {
         await response.json();
         toast.success("Product successfully updated");
+        router.push("/admin/products");
       } else {
         throw Error("There was an error while updating product");
       }
