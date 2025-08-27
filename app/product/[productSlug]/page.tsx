@@ -53,7 +53,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
               {images?.map((imageItem: ImageItem) => (
                 <Image
                   key={imageItem.imageID}
-                  src={`${process.env.NEXT_PUBLIC_API_URL}/${imageItem.image}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${imageItem.image}`}
                   width={100}
                   height={100}
                   alt="laptop image"

@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         product_data: {
           name: p.title,
           images: p.image
-            ? [p.image.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_BASE_URL}${p.image}`]
+            ? [p.image.startsWith("http") ? p.image : `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${p.image}`]
             : [],
           //metadata: { order_id: String(orderId || "") },
         },

@@ -254,7 +254,7 @@ useEffect(() => {
             image: p.image?.startsWith("http")
               ? p.image
               : p.image
-                ? `${process.env.NEXT_PUBLIC_API_URL}/${p.image}`
+                ? `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${p.image}`
                 : undefined,
             amount: p.amount,
           })),
@@ -315,7 +315,7 @@ useEffect(() => {
                   className="flex items-start space-x-4 py-6"
                 >
                   <Image
-                    src={product?.image ? `${process.env.NEXT_PUBLIC_API_URL}/${product?.image}` : "/product_placeholder.jpg"}
+                    src={product?.image ? `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${product?.image}` : "/product_placeholder.jpg"}
                     alt={product?.title}
                     width={80}
                     height={80}

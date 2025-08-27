@@ -46,7 +46,7 @@ const CartPage = () => {
                       <Image
                         width={192}
                         height={192}
-                        src={product?.image ? `${process.env.NEXT_PUBLIC_API_URL}/${product.image}` : "/product_placeholder.jpg"}
+                        src={product?.image ? `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${product.image}` : "/product_placeholder.jpg"}
                         alt="laptop image"
                         className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
                       />

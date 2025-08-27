@@ -86,7 +86,7 @@ const WishItem = ({
       <th>
         <div className="w-12 h-12 mx-auto" onClick={() => openProduct(slug)}>
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/${image}`}
+            src={`${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${image}`}
             width={200}
             height={200}
             className="w-auto h-auto"
