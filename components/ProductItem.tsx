@@ -26,7 +26,7 @@ const ProductItem = ({
         <Image
           src={
             product.mainImage
-              ? `${process.env.NEXT_PUBLIC_API_URL}/${product.mainImage}`
+              ? `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${product.mainImage}`
               : "/product_placeholder.jpg"
           }
           width="0"

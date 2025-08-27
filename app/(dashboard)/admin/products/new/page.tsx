@@ -42,7 +42,10 @@ const AddNewProduct = () => {
       toast.error("Please enter values in input fields");
       return;
     }
-
+    if (!product.mainImage) {
+      toast.error("Please upload a main image first");
+      return;
+    }
     const requestOptions: any = {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -87,6 +90,7 @@ const AddNewProduct = () => {
 
       if (response.ok) {
         const data = await response.json();
+        setProduct(prev => ({ ...prev, mainImage: data.fileName }));
       } else {
         console.error("File upload unsuccessfull");
       }
@@ -239,7 +243,7 @@ const AddNewProduct = () => {
           />
           {product?.mainImage && (
             <Image
-              src={`${process.env.NEXT_PUBLIC_API_URL}/` + product?.mainImage}
+              src={`${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/` + product?.mainImage}
               alt={product?.title}
               className="w-auto h-auto"
               width={100}

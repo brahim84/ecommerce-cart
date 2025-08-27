@@ -19,7 +19,25 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const DashboardProductDetails = ({
   params: { id },
 }: DashboardProductDetailsProps) => {
-  const [product, setProduct] = useState<Product>();
+  const [product, setProduct] = useState<{
+    title: string;
+    price: number;
+    manufacturer: string;
+    inStock: number;
+    mainImage: string;
+    description: string;
+    slug: string;
+    categoryId: string;
+  }>({
+    title: "",
+    price: 0,
+    manufacturer: "",
+    inStock: 1,
+    mainImage: "",
+    description: "",
+    slug: "",
+    categoryId: "",
+  });
   const [categories, setCategories] = useState<Category[]>();
   const [otherImages, setOtherImages] = useState<OtherImages[]>([]);
   const router = useRouter();
@@ -60,7 +78,10 @@ const DashboardProductDetails = ({
       toast.error("You need to enter values in input fields");
       return;
     }
-
+    if (!product.mainImage) {
+      toast.error("Please upload a main image first");
+      return;
+    }
     try {
       const response = await authFetch(`${API_URL}/api/products/${id}`, {
         method: "PUT",
@@ -92,6 +113,7 @@ const DashboardProductDetails = ({
 
       if (response.ok) {
         const data = await response.json();
+        setProduct(prev => ({ ...prev, mainImage: data.fileName }));
       } else {
         toast.error("File upload unsuccessful.");
       }
@@ -278,7 +300,7 @@ const DashboardProductDetails = ({
           />
           {product?.mainImage && (
             <Image
-              src={`${process.env.NEXT_PUBLIC_API_URL}/` + product?.mainImage}
+              src={`${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/` + product?.mainImage}
               alt={product?.title}
               className="w-auto h-auto mt-2"
               width={100}
@@ -292,7 +314,7 @@ const DashboardProductDetails = ({
           {otherImages &&
             otherImages.map((image) => (
               <Image
-                src={`${process.env.NEXT_PUBLIC_API_URL}/${image.image}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${image.image}`}
                 key={nanoid()}
                 alt="product image"
                 width={100}

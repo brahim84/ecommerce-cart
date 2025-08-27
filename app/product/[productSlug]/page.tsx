@@ -42,8 +42,8 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
       <div className="max-w-screen-2xl mx-auto">
         <div className="flex justify-center gap-x-8 pt-10 max-lg:flex-col items-center gap-y-5 px-5">
           <div>
-            <Image
-              src={product?.mainImage ? `${process.env.NEXT_PUBLIC_API_URL}/${product?.mainImage}` : "/product_placeholder.jpg"}
+           <Image
+              src={product?.mainImage ? `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_UPLOADS_URL}/${product?.mainImage}` : "/product_placeholder.jpg"}
               width={500}
               height={500}
               alt="main image"
