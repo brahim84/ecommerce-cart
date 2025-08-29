@@ -341,18 +341,23 @@ useEffect(() => {
 
               <div className="flex items-center justify-between">
                 <dt className="text-gray-600">Shipping</dt>
-                <dd>$5</dd>
+                <dd> 
+                  <div className="flex gap-2">
+                    <div className="line-through">$5.00</div>
+                    <div>$0.00</div>
+                  </div>
+                </dd>
               </div>
 
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <dt className="text-gray-600">Taxes</dt>
                 <dd>${total / 5}</dd>
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                 <dt className="text-base">Total</dt>
                 <dd className="text-base">
-                  ${total === 0 ? 0 : Math.round(total + total / 5 + 5)}
+                  ${total === 0 ? 0 : Math.round(total)}
                 </dd>
               </div>
             </dl>

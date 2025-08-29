@@ -147,9 +147,14 @@ const CartPage = () => {
                       />
                     </a>
                   </dt>
-                  <dd className="text-sm font-medium text-gray-900">$5.00</dd>
+                  <dd className="text-sm font-medium text-gray-900">
+                  <div className="flex gap-2">
+                    <div className="line-through">$5.00</div>
+                    <div>$0.00</div>
+                  </div>
+                  </dd>
                 </div>
-                <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                {/* <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                   <dt className="flex text-sm text-gray-600">
                     <span>Tax estimate</span>
                     <a
@@ -168,13 +173,13 @@ const CartPage = () => {
                   <dd className="text-sm font-medium text-gray-900">
                     ${total / 5}
                   </dd>
-                </div>
+                </div> */}
                 <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                   <dt className="text-base font-medium text-gray-900">
                     Order total
                   </dt>
                   <dd className="text-base font-medium text-gray-900">
-                    ${total === 0 ? 0 : Math.round(total + total / 5 + 5)}
+                    ${total === 0 ? 0 : Math.round(total)}
                   </dd>
                 </div>
               </dl>
