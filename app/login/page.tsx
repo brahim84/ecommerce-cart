@@ -160,7 +160,7 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4">
+              {/* <div className="mt-6 grid grid-cols-2 gap-4">
                 <button
                   className="flex w-full items-center border border-gray-300 justify-center gap-3 rounded-md bg-white px-3 py-1.5 text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   onClick={() => {
@@ -195,7 +195,7 @@ const LoginPage = () => {
                     GitHub
                   </span>
                 </button>
-              </div>
+              </div> */}
               <p className="text-red-600 text-center text-[16px] my-4">
                 {error && error}
               </p>

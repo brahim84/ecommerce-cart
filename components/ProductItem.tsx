@@ -21,7 +21,7 @@ const ProductItem = ({
   color: string;
 }) => {
   return (
-    <div className="flex flex-col items-center gap-y-2 bg-white rounded-2xl shadow-xl p-4 hover:shadow-2xl transition-shadow duration-300">
+    <div className="flex flex-col items-center gap-y-2 bg-white rounded-2xl shadow-xl p-4 hover:shadow-2xl transition-shadow duration-300 max-w-xs">
       <Link href={`/product/${product.slug}`}>
         <Image
           src={
@@ -38,11 +38,7 @@ const ProductItem = ({
       </Link>
       <Link
         href={`/product/${product.slug}`}
-        className={
-          color === "black"
-            ? "text-xl text-black font-normal mt-2 uppercase"
-            : "text-xl text-blue-900 font-normal mt-2 uppercase"
-        }
+        className={`text-xl font-normal mt-2 uppercase w-full break-words text-center`}
       >
         {product.title}
       </Link>
