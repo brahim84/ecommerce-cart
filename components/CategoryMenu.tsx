@@ -44,7 +44,7 @@ const CategoryMenu = () => {
         ))}
       </div> */}
 
-    <div className="max-w-screen-2xl mx-auto py-10 px-16 max-md:px-10 flex flex-wrap gap-x-10 gap-y-5 justify-center">
+    <div className="max-w-screen-2xl mx-auto py-12 px-20 max-md:px-14 flex flex-wrap gap-x-16 gap-y-8 justify-center">
       {categoryMenuList.map((item) => (
         <CategoryItem key={item.id} item={item} />
       ))}

@@ -44,3 +44,5 @@ export { default as StatsElement } from "./StatsElement";
 export { default as DashboardProductTable } from "./DashboardProductTable";
 export { default as AdminOrders } from "./AdminOrders";
 export { default as OrderItem } from "./OrderItem";
+export { default as PromoMarquee } from "./PromoMarquee";
+export { default as SearchMessage } from "./SearchMessage";

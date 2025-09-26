@@ -29,12 +29,12 @@ const CategoryItem: React.FC<CategoryCardProps> = ({ item }) => {
     "GATE-REMOTE": "/home.png"
   };
   return (
-    <div className="flex flex-col items-center gap-y-2 bg-white rounded-2xl shadow-xl p-4 h-fit hover:shadow-2xl transition-shadow duration-300 max-w-xs">
+    <div className="flex flex-col items-center gap-y-2 bg-white rounded-2xl shadow-xl p-3 hover:shadow-2xl transition-shadow duration-300 max-w-sm">
     <Link
       href={`/shop/${item.name}`}
-      className="flex flex-col items-center bg-white rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-2xl transition-shadow duration-300 w-full max-w-xs"
+      className="flex flex-col items-center bg-white rounded-xl shadow-lg p-3 cursor-pointer hover:shadow-2xl transition-shadow duration-300 w-full max-w-xs"
     >
-      <div className="relative h-44 w-full flex justify-center items-center">
+      <div className="relative h-80 w-80 flex justify-center items-center">
       <Image
         src={`${process.env.NEXT_PUBLIC_API_URL}${iconSrcMap[item.name] || "/product_placeholder.jpg"}`}
         fill
