@@ -28,12 +28,30 @@ interface OrderProduct {
   };
 }
 
+interface Order {
+  id: string;
+  line1: string;
+  line2: string;
+  company: string;
+  dateTime: string;
+  email: string;
+  lastname: string;
+  name: string;
+  phone: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  orderNotice: string;
+  status: "processing" | "delivered" | "canceled";
+  total: number;
+}
+
 const AdminSingleOrder = () => {
   const [orderProducts, setOrderProducts] = useState<OrderProduct[]>();
   const [order, setOrder] = useState<Order>({
     id: "",
-    adress: "",
-    apartment: "",
+    line1: "",
+    line2: "",
     company: "",
     dateTime: "",
     email: "",
@@ -58,6 +76,8 @@ const AdminSingleOrder = () => {
         `${API_URL}/api/orders/${params?.id}`
       );
       const data: Order = await response.json();
+      console.log("--Order-data-----",data);
+
       setOrder(data);
     };
 
@@ -66,6 +86,7 @@ const AdminSingleOrder = () => {
         `${API_URL}/api/order-product/${params?.id}`
       );
       const data: OrderProduct[] = await response.json();
+      console.log("---data-----",data);
       setOrderProducts(data);
     };
 
@@ -80,8 +101,8 @@ const AdminSingleOrder = () => {
       order?.phone.length > 0 &&
       order?.email.length > 0 &&
       order?.company.length > 0 &&
-      order?.adress.length > 0 &&
-      order?.apartment.length > 0 &&
+      order?.line1.length > 0 &&
+      order?.line2.length > 0 &&
       order?.city.length > 0 &&
       order?.country.length > 0 &&
       order?.postalCode.length > 0
@@ -237,8 +258,8 @@ const AdminSingleOrder = () => {
               <input
                 type="text"
                 className="input input-bordered w-full max-w-xs"
-                value={order?.adress}
-                onChange={(e) => setOrder({ ...order, adress: e.target.value })}
+                value={order?.line1}
+                onChange={(e) => setOrder({ ...order, line1: e.target.value })}
               />
             </label>
           </div>
@@ -251,9 +272,9 @@ const AdminSingleOrder = () => {
               <input
                 type="text"
                 className="input input-bordered w-full max-w-xs"
-                value={order?.apartment}
+                value={order?.line2}
                 onChange={(e) =>
-                  setOrder({ ...order, apartment: e.target.value })
+                  setOrder({ ...order, line2: e.target.value })
                 }
               />
             </label>
@@ -377,14 +398,14 @@ const AdminSingleOrder = () => {
           <div className="flex gap-x-2 max-sm:flex-col mt-5">
             <button
               type="button"
-              className="uppercase bg-blue-500 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
+              className="uppercase bg-blue-500 px-10 py-5 text-lg border border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
               onClick={updateOrder}
             >
               Update order
             </button>
             <button
               type="button"
-              className="uppercase bg-red-600 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2"
+              className="uppercase bg-red-600 px-10 py-5 text-lg border border-gray-300 font-bold text-white shadow-sm hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2"
               onClick={deleteOrder}
             >
               Delete order
