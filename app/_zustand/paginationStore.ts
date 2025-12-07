@@ -7,6 +7,7 @@ export type State = {
 export type Actions = {
   incrementPage: () => void;
   decrementPage: () => void;
+  setPage: (n: number) => void;
 };
 
 export const usePaginationStore = create<State & Actions>((set) => ({
@@ -25,5 +26,8 @@ export const usePaginationStore = create<State & Actions>((set) => ({
       }
       return {page: 1};
     });
+  },
+  setPage: (n: number) => {
+    set(() => ({ page: n }));
   },
 }));

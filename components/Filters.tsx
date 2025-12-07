@@ -17,6 +17,7 @@ const Filters = () => {
   const { replace } = useRouter();
 
   const { page } = usePaginationStore();
+  const { setPage } = usePaginationStore();
   const { sortBy } = useSortStore();
 
   const [inputCategory, setInputCategory] = useState<InputCategory>({
@@ -27,6 +28,11 @@ const Filters = () => {
   });
 
   useEffect(() => {
+    // If there are no search params at all, reset pagination to page 1 to avoid persisting previous state
+    if (!searchParams || searchParams.toString().trim() === "") {
+      setPage(1);
+    }
+
     // Start from current params to avoid unnecessary changes
     const params = new URLSearchParams(searchParams.toString());
 
