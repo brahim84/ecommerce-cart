@@ -33,7 +33,7 @@ const Header = () => {
   const { wishlist, setWishlist, wishQuantity } = useWishlistStore();
 
   const handleLogout = () => {
-    setTimeout(() => signOut(), 1000);
+    setTimeout(() => signOut({ callbackUrl: window.location.origin }), 1000);
     toast.success("Logout successful!");
   };
 
@@ -46,19 +46,19 @@ const Header = () => {
       title: string;
       price: number;
       image: string;
-      slug:string
+      slug: string
       stockAvailabillity: number;
     }[] = [];
-    
-    wishlist.map((item: any) => productArray.push({id: item?.product?.id, title: item?.product?.title, price: item?.product?.price, image: item?.product?.mainImage, slug: item?.product?.slug, stockAvailabillity: item?.product?.inStock}));
-    
+
+    wishlist.map((item: any) => productArray.push({ id: item?.product?.id, title: item?.product?.title, price: item?.product?.price, image: item?.product?.mainImage, slug: item?.product?.slug, stockAvailabillity: item?.product?.inStock }));
+
     setWishlist(productArray);
   };
 
   // getting user by email so I can get his user id
   const getUserByEmail = async () => {
     if (session?.user?.email) {
-      
+
       authFetch(`${API_URL}/api/users/email/${session?.user?.email}`, {
         cache: "no-store",
       })
@@ -98,10 +98,10 @@ const Header = () => {
       {pathname.startsWith("/admin") === true && (
         <div className="flex justify-between h-32 bg-white items-center px-16 max-[1320px]:px-10  max-w-screen-2xl mx-auto max-[400px]:px-5">
           <Link href="/">
-          <h2 className="text-white text-2xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
-          <span className="text-black">Remote</span><span className="text-blue-600"> Shop </span>
-            {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
-          </h2>
+            <h2 className="text-white text-2xl font-extrabold text-center mb-2 max-md:text-6xl max-[480px]:text-4xl">
+              <span className="text-black">Remote</span><span className="text-blue-600"> Shop </span>
+              {/* <img src="/logo v1 svg.svg" width={300} height={300} alt="NZ Remote Works" className="relative right-5 max-[1023px]:w-56" /> */}
+            </h2>
           </Link>
           <div className="flex gap-x-5 items-center">
             <FaBell className="text-xl" />
